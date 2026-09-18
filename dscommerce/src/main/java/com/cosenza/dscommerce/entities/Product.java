@@ -2,6 +2,7 @@ package com.cosenza.dscommerce.entities;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.hibernate.annotations.ManyToAny;
@@ -105,5 +106,27 @@ public class Product {
     return items.stream().map(x -> x.getOrder()).toList();
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 23 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Product other = (Product) obj;
+        return Objects.equals(this.id, other.id);
+    }
+    
     
 }
