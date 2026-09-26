@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cosenza.dscommerce.dto.ProductDTO;
 import com.cosenza.dscommerce.entities.Product;
 import com.cosenza.dscommerce.repositories.ProductRepository;
+import com.cosenza.dscommerce.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProductService {
@@ -18,8 +21,8 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
-        Product product = repository.findById(id).get();
-        return new ProductDTO(product);
+             Product product = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
+            return new ProductDTO(product);
     }
 
     @Transactional(readOnly = true)
@@ -38,10 +41,15 @@ public class ProductService {
 
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
+        try {
         Product entity = repository.getReferenceById(id);
         copyDtoToEntity(dto, entity);
         entity = repository.save(entity);
         return new ProductDTO(entity);
+        }
+        catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Recurso não encontrado");
+        }
     }
 
      @Transactional
